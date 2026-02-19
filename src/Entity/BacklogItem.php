@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\BacklogItemRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BacklogItemRepository::class)]
 #[ApiResource]
@@ -15,6 +16,7 @@ class BacklogItem
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Choice(choices:['movie','book','game'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $type = null;
 
