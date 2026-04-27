@@ -16,10 +16,11 @@ class BacklogItem
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\Choice(choices:['movie','book','game'])]
+    #[Assert\Choice(choices:['movie','book','game'], message: "El tipo debe ser 'movie', 'book' o 'game")]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $type = null;
 
+    #[Assert\NotBlank(message: 'El título no puede estar vacío.')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
@@ -28,6 +29,9 @@ class BacklogItem
 
     #[ORM\Column(nullable: true)]
     private ?int $progress = null;
+
+    #[ORM\ManyToOne(inversedBy: 'backlogItems')]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -85,6 +89,18 @@ class BacklogItem
     public function setProgress(?int $progress): static
     {
         $this->progress = $progress;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
