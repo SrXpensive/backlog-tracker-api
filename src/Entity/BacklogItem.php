@@ -6,22 +6,28 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\BacklogItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: BacklogItemRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['backlog:read']],
+    denormalizationContext: ['groups' => ['backlog:write']]
+)]
 class BacklogItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['backlog:read'])]
     private ?int $id = null;
 
-    #[Assert\Choice(choices:['movie','book','game'], message: "El tipo debe ser 'movie', 'book' o 'game")]
+    #[Assert\Choice(choices:['movie','book','game'], message: "El tipo debe ser 'movie', 'book' o 'game'")]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $type = null;
 
     #[Assert\NotBlank(message: 'El título no puede estar vacío.')]
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['backlog:read','backlog:write'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -31,6 +37,7 @@ class BacklogItem
     private ?int $progress = null;
 
     #[ORM\ManyToOne(inversedBy: 'backlogItems')]
+    #[Groups(['backlog:read','backlog:write'])]
     private ?User $user = null;
 
     public function getId(): ?int
