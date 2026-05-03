@@ -7,18 +7,37 @@ use App\Repository\BacklogItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Attribute\Groups;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\State\CompleteBacklogItemProcessor;
 
 #[ORM\Entity(repositoryClass: BacklogItemRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['backlog:read']],
-    denormalizationContext: ['groups' => ['backlog:write']]
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['backlog:list']]
+        ),
+        new Get(
+            normalizationContext: ['groups' => ['backlog:detail']]
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['backlog:write']]
+        ),
+        new Post(
+            uriTemplate: '/backlog_items/{id}/complete',
+            processor: CompleteBacklogItemProcessor::class,
+            read: true,
+            deserialize: false
+        )
+    ]
 )]
 class BacklogItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['backlog:read'])]
+    #[Groups(['backlog:list', 'backlog:detail'])]
     private ?int $id = null;
 
     #[Assert\Choice(choices:['movie','book','game'], message: "El tipo debe ser 'movie', 'book' o 'game'")]
@@ -27,7 +46,7 @@ class BacklogItem
 
     #[Assert\NotBlank(message: 'El título no puede estar vacío.')]
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['backlog:read','backlog:write'])]
+    #[Groups(['backlog:list', 'backlog:detail', 'backlog:write'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -37,7 +56,7 @@ class BacklogItem
     private ?int $progress = null;
 
     #[ORM\ManyToOne(inversedBy: 'backlogItems')]
-    #[Groups(['backlog:read','backlog:write'])]
+    #[Groups(['backlog:detail'])]
     private ?User $user = null;
 
     public function getId(): ?int
