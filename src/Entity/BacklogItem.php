@@ -14,6 +14,8 @@ use ApiPlatform\Metadata\Patch;
 use App\State\CompleteBacklogItemProcessor;
 use App\Dto\BacklogItemUpdateInput;
 use App\State\BacklogItemUpdateProcessor;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 
 #[ORM\Entity(repositoryClass: BacklogItemRepository::class)]
 #[ApiResource(
@@ -33,6 +35,11 @@ use App\State\BacklogItemUpdateProcessor;
         )
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'status' => 'exact',
+    'title' => 'partial',
+    'user' => 'exact'
+])]
 class BacklogItem
 {
     #[ORM\Id]
