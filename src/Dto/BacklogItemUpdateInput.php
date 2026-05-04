@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Dto;
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+class BacklogItemUpdateInput{
+    #[Assert\NotBlank]
+    public string $status;
+}

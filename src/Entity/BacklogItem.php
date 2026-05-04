@@ -10,7 +10,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
 use App\State\CompleteBacklogItemProcessor;
+use App\Dto\BacklogItemUpdateInput;
+use App\State\BacklogItemUpdateProcessor;
 
 #[ORM\Entity(repositoryClass: BacklogItemRepository::class)]
 #[ApiResource(
@@ -24,11 +27,9 @@ use App\State\CompleteBacklogItemProcessor;
         new Post(
             denormalizationContext: ['groups' => ['backlog:write']]
         ),
-        new Post(
-            uriTemplate: '/backlog_items/{id}/complete',
-            processor: CompleteBacklogItemProcessor::class,
-            read: true,
-            deserialize: false
+        new Patch(
+            input: BacklogItemUpdateInput::class,
+            processor: BacklogItemUpdateProcessor::class
         )
     ]
 )]
