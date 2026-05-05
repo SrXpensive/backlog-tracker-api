@@ -16,6 +16,7 @@ use App\Dto\BacklogItemUpdateInput;
 use App\State\BacklogItemUpdateProcessor;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 
 #[ORM\Entity(repositoryClass: BacklogItemRepository::class)]
 #[ApiResource(
@@ -33,12 +34,18 @@ use ApiPlatform\Metadata\ApiFilter;
             input: BacklogItemUpdateInput::class,
             processor: BacklogItemUpdateProcessor::class
         )
-    ]
+    ],
+    paginationItemsPerPage: 2
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'status' => 'exact',
     'title' => 'partial',
     'user' => 'exact'
+])]
+#[ApiFilter(OrderFilter::class, properties: [
+    'title',
+    'status',
+    'progress'
 ])]
 class BacklogItem
 {
