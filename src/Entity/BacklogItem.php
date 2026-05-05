@@ -74,6 +74,10 @@ class BacklogItem
     #[Groups(['backlog:detail'])]
     private ?User $user = null;
 
+    #[ORM\ManyToOne(inversedBy: 'backlogItems')]
+    #[Groups(['backlog:detail','backlog:write'])]
+    private ?Category $category = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -142,6 +146,18 @@ class BacklogItem
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }
