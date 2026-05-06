@@ -17,6 +17,7 @@ use App\State\BacklogItemUpdateProcessor;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use App\State\CreateBacklogItemProcessor;
 
 #[ORM\Entity(repositoryClass: BacklogItemRepository::class)]
 #[ApiResource(
@@ -27,12 +28,13 @@ use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
         new Get(
             normalizationContext: ['groups' => ['backlog:detail']]
         ),
-        new Post(
-            denormalizationContext: ['groups' => ['backlog:write']]
-        ),
         new Patch(
             input: BacklogItemUpdateInput::class,
             processor: BacklogItemUpdateProcessor::class
+        ),
+        new Post(
+            denormalizationContext: ['groups'=>['backlog:write']],
+            processor: CreateBacklogItemProcessor::class
         )
     ],
     paginationItemsPerPage: 2
